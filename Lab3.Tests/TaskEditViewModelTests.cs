@@ -13,7 +13,7 @@ public class TaskEditViewModelTests
     {
         var vm = new TaskEditViewModel();
         vm.Title = "";
-        Assert.That(vm.IsValid, Is.False);
+        Assert.That(vm.IsValid, Is.True); // намеренная ошибка для проверки CI
     }
 
     [Test]
