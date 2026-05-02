@@ -5,7 +5,7 @@ namespace Lab3.ViewModels;
 
 public class TaskItemViewModel : BaseViewModel
 {
-    private bool _isSelected;
+    private bool isSelected;
 
     public TodoTask Task { get; }
 
@@ -19,7 +19,7 @@ public class TaskItemViewModel : BaseViewModel
 
     public bool IsSelected
     {
-        get => _isSelected;
-        set => SetProperty(ref _isSelected, value);
+        get => isSelected;
+        set => SetProperty(ref isSelected, value);
     }
 }

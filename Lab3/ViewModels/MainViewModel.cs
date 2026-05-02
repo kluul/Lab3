@@ -10,15 +10,15 @@ namespace Lab3.ViewModels;
 
 public class MainViewModel : BaseViewModel
 {
-    private readonly ITaskRepository _repository;
-    private ObservableCollection<TaskItemViewModel> _tasks = [];
-    private FilterStatus _currentFilter = FilterStatus.All;
-    private bool _isLoading;
-    private string _statusText = string.Empty;
+    private readonly ITaskRepository repository;
+    private ObservableCollection<TaskItemViewModel> tasks = [];
+    private FilterStatus currentFilter = FilterStatus.All;
+    private bool isLoadingField;
+    private string statusText = string.Empty;
 
     public MainViewModel(ITaskRepository repository)
     {
-        _repository = repository;
+        this.repository = repository;
 
         LoadCommand = new AsyncRelayCommand(LoadTasksAsync);
         AddCommand = new AsyncRelayCommand(AddTaskAsync, () => !IsLoading);
@@ -30,16 +30,16 @@ public class MainViewModel : BaseViewModel
 
     public ObservableCollection<TaskItemViewModel> Tasks
     {
-        get => _tasks;
-        private set => SetProperty(ref _tasks, value);
+        get => tasks;
+        private set => SetProperty(ref tasks, value);
     }
 
     public FilterStatus CurrentFilter
     {
-        get => _currentFilter;
+        get => currentFilter;
         private set
         {
-            SetProperty(ref _currentFilter, value);
+            SetProperty(ref currentFilter, value);
             OnPropertyChanged(nameof(IsFilterAll));
             OnPropertyChanged(nameof(IsFilterActive));
             OnPropertyChanged(nameof(IsFilterCompleted));
@@ -52,14 +52,14 @@ public class MainViewModel : BaseViewModel
 
     public bool IsLoading
     {
-        get => _isLoading;
-        private set => SetProperty(ref _isLoading, value);
+        get => isLoadingField;
+        private set => SetProperty(ref isLoadingField, value);
     }
 
     public string StatusText
     {
-        get => _statusText;
-        private set => SetProperty(ref _statusText, value);
+        get => statusText;
+        private set => SetProperty(ref statusText, value);
     }
 
     public ICommand LoadCommand { get; }
@@ -78,7 +78,7 @@ public class MainViewModel : BaseViewModel
         StatusText = "Загрузка...";
         try
         {
-            var all = await _repository.GetAllAsync();
+            var all = await repository.GetAllAsync();
             var filtered = Filter(all);
             Tasks = new ObservableCollection<TaskItemViewModel>(filtered.Select(t => new TaskItemViewModel(t)));
             UpdateStatus();
@@ -96,7 +96,7 @@ public class MainViewModel : BaseViewModel
         try
         {
             var task = editVm.ToModel();
-            await _repository.AddAsync(task);
+            await repository.AddAsync(task);
             await RefreshListAsync();
         }
         finally { IsLoading = false; }
@@ -114,7 +114,7 @@ public class MainViewModel : BaseViewModel
         try
         {
             var task = editVm.ToModel();
-            await _repository.UpdateAsync(task);
+            await repository.UpdateAsync(task);
             await RefreshListAsync();
         }
         finally { IsLoading = false; }
@@ -130,7 +130,7 @@ public class MainViewModel : BaseViewModel
         StatusText = "Удаление...";
         try
         {
-            await _repository.DeleteAsync(item.Id);
+            await repository.DeleteAsync(item.Id);
             await RefreshListAsync();
         }
         finally { IsLoading = false; }
@@ -147,7 +147,7 @@ public class MainViewModel : BaseViewModel
         StatusText = "Удаление...";
         try
         {
-            await _repository.DeleteManyAsync(selected.Select(t => t.Id));
+            await repository.DeleteManyAsync(selected.Select(t => t.Id));
             await RefreshListAsync();
         }
         finally { IsLoading = false; }
@@ -161,17 +161,17 @@ public class MainViewModel : BaseViewModel
 
     private async Task RefreshListAsync()
     {
-        var all = await _repository.GetAllAsync();
+        var all = await repository.GetAllAsync();
         var filtered = Filter(all);
         Tasks = new ObservableCollection<TaskItemViewModel>(filtered.Select(t => new TaskItemViewModel(t)));
         UpdateStatus();
     }
 
-    private IEnumerable<TodoTask> Filter(IEnumerable<TodoTask> tasks) => CurrentFilter switch
+    private IEnumerable<TodoTask> Filter(IEnumerable<TodoTask> taskList) => CurrentFilter switch
     {
-        FilterStatus.Active => tasks.Where(t => !t.IsCompleted),
-        FilterStatus.Completed => tasks.Where(t => t.IsCompleted),
-        _ => tasks
+        FilterStatus.Active => taskList.Where(t => !t.IsCompleted),
+        FilterStatus.Completed => taskList.Where(t => t.IsCompleted),
+        _ => taskList
     };
 
     private void UpdateStatus()

@@ -16,48 +16,48 @@ public class JsonTaskRepository : ITaskRepository
 
     private static readonly JsonSerializerOptions JsonOptions = new() { WriteIndented = true };
 
-    private List<TodoTask> _cache = [];
+    private List<TodoTask> cache = [];
 
     public async Task<IEnumerable<TodoTask>> GetAllAsync()
     {
         await SimulateNetworkDelay();
-        _cache = await LoadFromDisk();
-        return _cache.AsReadOnly();
+        cache = await LoadFromDisk();
+        return cache.AsReadOnly();
     }
 
     public async Task AddAsync(TodoTask task)
     {
         await SimulateNetworkDelay();
-        _cache = await LoadFromDisk();
-        _cache.Add(task);
-        await SaveToDisk(_cache);
+        cache = await LoadFromDisk();
+        cache.Add(task);
+        await SaveToDisk(cache);
     }
 
     public async Task UpdateAsync(TodoTask task)
     {
         await SimulateNetworkDelay();
-        _cache = await LoadFromDisk();
-        var idx = _cache.FindIndex(t => t.Id == task.Id);
+        cache = await LoadFromDisk();
+        var idx = cache.FindIndex(t => t.Id == task.Id);
         if (idx >= 0)
-            _cache[idx] = task;
-        await SaveToDisk(_cache);
+            cache[idx] = task;
+        await SaveToDisk(cache);
     }
 
     public async Task DeleteAsync(Guid id)
     {
         await SimulateNetworkDelay();
-        _cache = await LoadFromDisk();
-        _cache.RemoveAll(t => t.Id == id);
-        await SaveToDisk(_cache);
+        cache = await LoadFromDisk();
+        cache.RemoveAll(t => t.Id == id);
+        await SaveToDisk(cache);
     }
 
     public async Task DeleteManyAsync(IEnumerable<Guid> ids)
     {
         await SimulateNetworkDelay();
         var idSet = ids.ToHashSet();
-        _cache = await LoadFromDisk();
-        _cache.RemoveAll(t => idSet.Contains(t.Id));
-        await SaveToDisk(_cache);
+        cache = await LoadFromDisk();
+        cache.RemoveAll(t => idSet.Contains(t.Id));
+        await SaveToDisk(cache);
     }
 
     private static async Task<List<TodoTask>> LoadFromDisk()

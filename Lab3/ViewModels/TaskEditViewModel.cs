@@ -5,18 +5,18 @@ namespace Lab3.ViewModels;
 
 public class TaskEditViewModel : BaseViewModel
 {
-    private string _title = string.Empty;
-    private string _description = string.Empty;
-    private bool _isCompleted;
-    private string? _titleError;
+    private string title = string.Empty;
+    private string description = string.Empty;
+    private bool isCompleted;
+    private string? titleError;
 
     public TaskEditViewModel() { }
 
     public TaskEditViewModel(TodoTask task)
     {
-        _title = task.Title;
-        _description = task.Description;
-        _isCompleted = task.IsCompleted;
+        title = task.Title;
+        description = task.Description;
+        isCompleted = task.IsCompleted;
         OriginalId = task.Id;
         CreatedAt = task.CreatedAt;
     }
@@ -27,10 +27,10 @@ public class TaskEditViewModel : BaseViewModel
 
     public string Title
     {
-        get => _title;
+        get => title;
         set
         {
-            SetProperty(ref _title, value);
+            SetProperty(ref title, value);
             TitleError = TodoTask.ValidateTitle(value);
             OnPropertyChanged(nameof(IsValid));
         }
@@ -38,20 +38,20 @@ public class TaskEditViewModel : BaseViewModel
 
     public string Description
     {
-        get => _description;
-        set => SetProperty(ref _description, value);
+        get => description;
+        set => SetProperty(ref description, value);
     }
 
     public bool IsCompleted
     {
-        get => _isCompleted;
-        set => SetProperty(ref _isCompleted, value);
+        get => isCompleted;
+        set => SetProperty(ref isCompleted, value);
     }
 
     public string? TitleError
     {
-        get => _titleError;
-        private set => SetProperty(ref _titleError, value);
+        get => titleError;
+        private set => SetProperty(ref titleError, value);
     }
 
     public bool IsValid => TitleError is null && !string.IsNullOrWhiteSpace(Title);

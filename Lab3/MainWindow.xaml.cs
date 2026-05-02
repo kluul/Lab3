@@ -7,21 +7,21 @@ namespace Lab3;
 
 public partial class MainWindow : Window
 {
-    private readonly MainViewModel _viewModel;
+    private readonly MainViewModel viewModel;
 
     public MainWindow()
     {
         InitializeComponent();
 
         var repository = new JsonTaskRepository();
-        _viewModel = new MainViewModel(repository)
+        viewModel = new MainViewModel(repository)
         {
             ShowEditDialog = ShowEditDialog,
             ShowConfirmDialog = ShowConfirmDialog
         };
 
-        DataContext = _viewModel;
-        Loaded += (_, _) => _viewModel.LoadCommand.Execute(null);
+        DataContext = viewModel;
+        Loaded += (_, _) => viewModel.LoadCommand.Execute(null);
     }
 
     private bool? ShowEditDialog(TaskEditViewModel vm)

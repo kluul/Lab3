@@ -6,13 +6,13 @@ namespace Lab3.ViewModels;
 
 public class RelayCommand : ICommand
 {
-    private readonly Action<object?> _execute;
-    private readonly Func<object?, bool>? _canExecute;
+    private readonly Action<object?> execute;
+    private readonly Func<object?, bool>? canExecute;
 
     public RelayCommand(Action<object?> execute, Func<object?, bool>? canExecute = null)
     {
-        _execute = execute;
-        _canExecute = canExecute;
+        this.execute = execute;
+        this.canExecute = canExecute;
     }
 
     public RelayCommand(Action execute, Func<bool>? canExecute = null)
@@ -24,21 +24,21 @@ public class RelayCommand : ICommand
         remove => CommandManager.RequerySuggested -= value;
     }
 
-    public bool CanExecute(object? parameter) => _canExecute?.Invoke(parameter) ?? true;
-    public void Execute(object? parameter) => _execute(parameter);
+    public bool CanExecute(object? parameter) => canExecute?.Invoke(parameter) ?? true;
+    public void Execute(object? parameter) => execute(parameter);
     public void RaiseCanExecuteChanged() => CommandManager.InvalidateRequerySuggested();
 }
 
 public class AsyncRelayCommand : ICommand
 {
-    private readonly Func<object?, Task> _execute;
-    private readonly Func<object?, bool>? _canExecute;
-    private bool _isExecuting;
+    private readonly Func<object?, Task> execute;
+    private readonly Func<object?, bool>? canExecute;
+    private bool isExecuting;
 
     public AsyncRelayCommand(Func<object?, Task> execute, Func<object?, bool>? canExecute = null)
     {
-        _execute = execute;
-        _canExecute = canExecute;
+        this.execute = execute;
+        this.canExecute = canExecute;
     }
 
     public AsyncRelayCommand(Func<Task> execute, Func<bool>? canExecute = null)
@@ -50,16 +50,16 @@ public class AsyncRelayCommand : ICommand
         remove => CommandManager.RequerySuggested -= value;
     }
 
-    public bool CanExecute(object? parameter) => !_isExecuting && (_canExecute?.Invoke(parameter) ?? true);
+    public bool CanExecute(object? parameter) => !isExecuting && (canExecute?.Invoke(parameter) ?? true);
 
     public async void Execute(object? parameter)
     {
-        _isExecuting = true;
+        isExecuting = true;
         CommandManager.InvalidateRequerySuggested();
-        try { await _execute(parameter); }
+        try { await execute(parameter); }
         finally
         {
-            _isExecuting = false;
+            isExecuting = false;
             CommandManager.InvalidateRequerySuggested();
         }
     }
